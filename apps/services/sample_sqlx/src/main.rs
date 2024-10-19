@@ -1,4 +1,14 @@
+use chrono::prelude::*;
+use sqlx::prelude::*;
 use sqlx::postgres::PgPoolOptions;
+use uuid::Uuid;
+
+#[derive(FromRow, Debug)]
+struct User {
+    pub uuid: Uuid,
+    pub content: String,
+    pub created_at: DateTime<Utc>,
+}
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -6,11 +16,11 @@ async fn main() -> anyhow::Result<()> {
         .max_connections(5)
         .connect("postgres://user:pass@postgresql/web").await?;
 
-    // Make a simple query to return the given parameter (use a question mark `?` instead of `$1` for MySQL/MariaDB)
-    let row: (i64,) = sqlx::query_as("SELECT $1")
-        .bind(150_i64)
+    let uuid: Uuid = Uuid::now_v7();
+    let row: User = sqlx::query_as("SELECT * FROM sample_get_list_users(p_uuid := $1)")
+        .bind(&uuid)
         .fetch_one(&pool).await?;
 
-    assert_eq!(row.0, 150);
+    println!("{:?}", row);
     Ok(())
 }
