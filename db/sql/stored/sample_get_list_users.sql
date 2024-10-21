@@ -3,6 +3,7 @@ CREATE TYPE type_sample_get_list_users AS (
   uuid UUID
   ,content TEXT
   ,created_at TIMESTAMPTZ
+  ,data_json JSONB
 );
 
 -- 企業に登録されている項目と、その選択肢を返す
@@ -17,6 +18,7 @@ BEGIN
     p_uuid
     ,'予定表～①💖ﾊﾝｶｸだ'
     ,now()
+    ,'{"key": "value"}'::JSONB
   ;
 END;
 $FUNCTION$ LANGUAGE plpgsql;
