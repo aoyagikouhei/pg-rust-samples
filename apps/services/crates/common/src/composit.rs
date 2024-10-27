@@ -3,7 +3,7 @@ const SQL: &str = r#"
 SELECT
     t1.*
 FROM
-    pg_get_select_composite(
+    sample_get_select_composite(
         p_value := $1
     ) AS t1 
 "#;
@@ -25,7 +25,7 @@ struct DomainInteger(i64);
 struct MemorySizeUnit(i64);
 
 #[derive(FromRow, Debug, sqlx::Type)]
-#[sqlx(type_name = "type_pg_get_select_composite")]
+#[sqlx(type_name = "type_sample_get_select_composite")]
 struct TypePgGetSelectComposite {
     os: TypeEnumOs,
     cpu_count: DomainInteger,
