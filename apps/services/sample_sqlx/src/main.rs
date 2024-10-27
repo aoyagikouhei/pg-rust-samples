@@ -11,5 +11,6 @@ async fn main() -> anyhow::Result<()> {
 
     common::type_check::execute(&pool).await?;
     common::user_sample::execute(&pool).await?;
+    common::composit::execute(&pool).await?;
     Ok(())
 }
