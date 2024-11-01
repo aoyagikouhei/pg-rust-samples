@@ -1,0 +1,10 @@
+[package]
+name = "api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+mockito = { workspace = true }
+reqwest = { workspace = true }
+tokio = { workspace = true }

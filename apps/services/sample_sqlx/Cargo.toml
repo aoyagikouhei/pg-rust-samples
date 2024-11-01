@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
+api = { path = "../crates/api" }
 common = { path = "../crates/common" }
 env_logger = { workspace = true }
 sqlx = { workspace = true }
