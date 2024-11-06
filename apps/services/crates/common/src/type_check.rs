@@ -1,10 +1,18 @@
-use std::{net::{IpAddr, Ipv4Addr}, str::FromStr};
 use bit_vec::BitVec;
 use chrono::prelude::*;
-use serde_json::json;
-use sqlx::{postgres::types::{Oid, PgHstore}, prelude::*, types::mac_address::MacAddress, Pool, Postgres};
-use uuid::Uuid;
 use rust_decimal::Decimal;
+use serde_json::json;
+use sqlx::{
+    postgres::types::{Oid, PgHstore},
+    prelude::*,
+    types::mac_address::MacAddress,
+    Pool, Postgres,
+};
+use std::{
+    net::{IpAddr, Ipv4Addr},
+    str::FromStr,
+};
+use uuid::Uuid;
 
 const SQL: &str = r#"
 SELECT
@@ -84,9 +92,9 @@ pub async fn execute(pool: &Pool<Postgres>) -> Result<(), sqlx::Error> {
         time_val: NaiveTime::from_hms_milli_opt(8, 59, 59, 100).unwrap(),
         macaddr_val: MacAddress::new([0x12, 0x34, 0x56, 0xAB, 0xCD, 0xEF]),
         jsonb_val: json!({
-                "name" : "予定表～①💖ﾊﾝｶｸだ",
-                "age" : 99
-            }),
+            "name" : "予定表～①💖ﾊﾝｶｸだ",
+            "age" : 99
+        }),
         uuid_val: Uuid::new_v4(),
         varbit_val: {
             let mut varbit_val = BitVec::from_elem(10, false);
@@ -98,7 +106,7 @@ pub async fn execute(pool: &Pool<Postgres>) -> Result<(), sqlx::Error> {
             let mut val = PgHstore::default();
             val.insert("key".to_owned(), Some("value".to_owned()));
             val
-        }
+        },
     };
 
     let res: Data = sqlx::query_as(SQL)
@@ -126,7 +134,8 @@ pub async fn execute(pool: &Pool<Postgres>) -> Result<(), sqlx::Error> {
         .bind(&data.varbit_val)
         .bind(&data.decimal_val)
         .bind(&data.hstore_val)
-        .fetch_one(pool).await?;
+        .fetch_one(pool)
+        .await?;
     assert_eq!(data, res);
     println!("{:?}", data);
 

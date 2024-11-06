@@ -7,7 +7,8 @@ async fn main() -> anyhow::Result<()> {
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect("postgres://user:pass@postgresql/web").await?;
+        .connect("postgres://user:pass@postgresql/web")
+        .await?;
 
     common::type_check::execute(&pool).await?;
     common::user_sample::execute(&pool).await?;

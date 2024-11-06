@@ -1,4 +1,3 @@
-
 #[tokio::main]
 pub async fn execute() -> anyhow::Result<()> {
     // Request a new server from the pool
@@ -9,12 +8,13 @@ pub async fn execute() -> anyhow::Result<()> {
     let url = server.url();
 
     // Create a mock
-    let mock = server.mock("GET", "/hello")
-      .with_status(201)
-      .with_header("content-type", "text/plain")
-      .with_header("x-api-key", "1234")
-      .with_body("world")
-      .create();
+    let mock = server
+        .mock("GET", "/hello")
+        .with_status(201)
+        .with_header("content-type", "text/plain")
+        .with_header("x-api-key", "1234")
+        .with_body("world")
+        .create();
 
     let client = reqwest::Client::new();
     let response = client.get(&format!("{}/hello", url)).send().await?;

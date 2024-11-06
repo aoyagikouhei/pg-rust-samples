@@ -13,7 +13,7 @@ FROM
 enum TypeEnumOs {
     Linux,
     MacOs,
-    Windows
+    Windows,
 }
 
 #[derive(sqlx::Type, Debug)]
@@ -39,9 +39,8 @@ pub async fn execute(pool: &Pool<Postgres>) -> Result<(), sqlx::Error> {
         memory_size: MemorySizeUnit(1024),
     };
 
-    let row: Vec<TypePgGetSelectComposite> = sqlx::query_as(SQL)
-        .bind(&data)
-        .fetch_all(pool).await?;
+    let row: Vec<TypePgGetSelectComposite> =
+        sqlx::query_as(SQL).bind(&data).fetch_all(pool).await?;
 
     println!("{:?}", row);
     Ok(())
