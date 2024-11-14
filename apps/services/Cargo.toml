@@ -9,10 +9,12 @@ anyhow = "1"
 bit-vec = "0.6"
 chrono = { version = "0.4", features = ["serde", "clock"] }
 env_logger = "0.11"
-mockito = "1.5.0"
+derive_builder = "0.20.2"
+mockito = "1.6.0"
 reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
 rust_decimal = "1.36.0"
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sqlx = { version = "0.8", features = [ "runtime-tokio", "postgres", "uuid", "macros", "chrono", "rust_decimal", "bit-vec", "ipnetwork", "mac_address", "time"] }
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "fs"] }
 uuid = { version = "1", features = ["serde", "v4", "v7"] }

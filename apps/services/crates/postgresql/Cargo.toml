@@ -1,0 +1,11 @@
+[package]
+name = "postgresql"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = { workspace = true }
+derive_builder = { workspace = true }
+serde = { workspace = true }
+sqlx = { workspace = true }
+uuid = { workspace = true }

@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "version": "1.0.0"
+  },
+  "domains": [
+    {
+      "lname": "ID",
+      "pname": "id",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "連番ID",
+      "pname": "id",
+      "type": "BIGSERIAL"
+    },
+    {
+      "lname": "名前",
+      "pname": "name",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true,
+      "as": "名"
+    },
+    {
+      "lname": "メール",
+      "pname": "mail",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "UUID",
+      "pname": "uuid",
+      "type": "UUID",
+      "default": "",
+      "notNull": true
+    },
+    {
+      "lname": "数",
+      "pname": "count",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "区分",
+      "pname": "kbn",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "内容",
+      "pname": "content",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "コード",
+      "pname": "code",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "日時",
+      "pname": "at",
+      "type": "TIMESTAMPTZ",
+      "default": "",
+      "notNull": false
+    },
+    {
+      "lname": "URL",
+      "pname": "url",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "タイトル",
+      "pname": "title",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "JSON",
+      "pname": "json",
+      "type": "JSONB",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "FBID",
+      "pname": "fbid",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "IGID",
+      "pname": "igid",
+      "type": "TEXT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "番号",
+      "pname": "number",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "TWID",
+      "pname": "twid",
+      "type": "NUMERIC",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "UUID配列",
+      "pname": "uuid_array",
+      "type": "UUID[]",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "テキスト配列",
+      "pname": "text_array",
+      "type": "TEXT[]",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "区分配列",
+      "pname": "kbn_array",
+      "type": "TEXT[]",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "JSON配列",
+      "pname": "json_array",
+      "type": "JSONB[]",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "金額",
+      "pname": "price",
+      "type": "NUMERIC",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "バイト",
+      "pname": "byte",
+      "type": "NUMERIC",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "コード配列",
+      "pname": "code_array",
+      "type": "TEXT[]",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "フラグ配列",
+      "pname": "flag_array",
+      "type": "BOOLEAN[]",
+      "default": "",
+      "notNull": true
+    },
+    {
+      "lname": "タイムゾーンオフセット",
+      "pname": "timezone_offset",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": false
+    },
+    {
+      "lname": "フラグ",
+      "pname": "flag",
+      "type": "BOOLEAN",
+      "default": "",
+      "notNull": false
+    },
+    {
+      "lname": "正規表現",
+      "pname": "regex",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "TWID配列",
+      "pname": "twid_array",
+      "type": "NUMERIC[]",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "フォーマット",
+      "pname": "format",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "配列",
+      "pname": "array",
+      "type": "BIGINT[]",
+      "default": "'{}'",
+      "notNull": true
+    },
+    {
+      "lname": "ドメイン名",
+      "pname": "domain",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "BelugaID",
+      "pname": "beluga_id",
+      "type": "TEXT",
+      "default": "encode(gen_random_bytes(10), 'hex')",
+      "notNull": true
+    },
+    {
+      "lname": "ミリ秒",
+      "pname": "milli_sec",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "秒",
+      "pname": "sec",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "分",
+      "pname": "minute",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "年月日",
+      "pname": "ymd",
+      "type": "TEXT",
+      "default": "''",
+      "notNull": true
+    },
+    {
+      "lname": "年齢",
+      "pname": "age",
+      "type": "BIGINT",
+      "default": "0",
+      "notNull": true
+    },
+    {
+      "lname": "日",
+      "pname": "date",
+      "type": "TIMESTAMPTZ",
+      "default": "",
+      "notNull": true
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+<%
+  const onDeleteCascade = ((table.metadata || {})["on_delete_cascade"] || "false") == "true"
+
+  const getType = (column) => {
+    if (column.type == 'BIGINT' && column.pk && column.pname == 'id') {
+      return 'BIGSERIAL';
+    }
+    return column.type;
+  };
+  const columns = table.columns.map((column) => {
+    let col_text = `${column.pname} ${getType(column)}`;
+    if (column.notNull) {
+      col_text += ' NOT NULL';
+    }
+    if (column.default && (!column.pk || column.pname != 'id')) {
+      col_text += ` DEFAULT ${column.default}`
+    }
+    if (column.fk) {
+      col_text += ` REFERENCES ${column.fk.table.pname} (${column.fk.column.pname})`;
+    }
+    col_text += ` -- ${column.lname}`;
+    return col_text;
+  }).join('\n  ,');
+  const pkeys = table.columns.filter((column) => {
+    return column.pk;
+  }).map((column) => {
+    return column.pname;
+  }).join(', ');
+  const fks = (table.metadata?.fks || []).map((fk) => {
+    let columns = fk.dst.join(', ');
+    let foreignColumns = fk.src.join(', ');
+    let res = `,FOREIGN KEY (${columns}) REFERENCES ${fk.table}(${foreignColumns})`;
+    return res;
+  }).join('\n  ');
+  let partition = '';
+  let partition_primary = '';
+  if (table.metadata && table.metadata['partition']) {
+    const map = table.metadata['partition']
+    partition = ` PARTITION BY ${_.toUpper(map['type'])}(${map['column']})`
+    partition_primary = `,PRIMARY KEY (${pkeys}, ${map['column']})`
+  }
+%>DROP TABLE IF EXISTS public.<%= table.pname %> CASCADE;
+DROP TABLE IF EXISTS garbage.<%= table.pname %> CASCADE;
+
+CREATE TABLE public.<%= table.pname %> (
+  <%- columns %>
+  ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,deleted_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,created_at TIMESTAMPTZ NOT NULL
+  ,updated_at TIMESTAMPTZ NOT NULL
+  ,deleted_at TIMESTAMPTZ
+  ,created_pg TEXT NOT NULL DEFAULT ''
+  ,updated_pg TEXT NOT NULL DEFAULT ''
+  ,deleted_pg TEXT NOT NULL DEFAULT ''
+  ,bk TEXT<% if (partition_primary !== '') { %>
+  <%= partition_primary %><% } else { %>
+  ,PRIMARY KEY(<%- pkeys %>) <% } %> <% if (fks !== '') { %>
+  <%- fks %><% } %>
+)<%= partition %>;
+
+CREATE TABLE garbage.<%= table.pname %> (
+  <%- columns %>
+  ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,deleted_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,created_at TIMESTAMPTZ NOT NULL
+  ,updated_at TIMESTAMPTZ NOT NULL
+  ,deleted_at TIMESTAMPTZ
+  ,created_pg TEXT NOT NULL DEFAULT ''
+  ,updated_pg TEXT NOT NULL DEFAULT ''
+  ,deleted_pg TEXT NOT NULL DEFAULT ''
+  ,bk TEXT<% if (partition_primary !== '') { %>
+  <%= partition_primary %><% } else { %>
+  ,PRIMARY KEY(<%- pkeys %>) <% } %>
+);

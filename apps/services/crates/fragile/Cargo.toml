@@ -1,0 +1,12 @@
+[package]
+name = "fragile"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+postgresql = { path = "../postgresql" }
+uuid = { workspace = true }
+
+[dev-dependencies]
+anyhow = { workspace = true }
+tokio = { workspace = true }

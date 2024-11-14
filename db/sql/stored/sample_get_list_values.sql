@@ -1,5 +1,5 @@
-DROP TYPE IF EXISTS type_sample_get_list_users CASCADE;
-CREATE TYPE type_sample_get_list_users AS (
+DROP TYPE IF EXISTS type_sample_get_list_values CASCADE;
+CREATE TYPE type_sample_get_list_values AS (
   uuid UUID
   ,content TEXT
   ,created_at TIMESTAMPTZ
@@ -7,11 +7,11 @@ CREATE TYPE type_sample_get_list_users AS (
 );
 
 -- 企業に登録されている項目と、その選択肢を返す
-CREATE OR REPLACE FUNCTION sample_get_list_users(
+CREATE OR REPLACE FUNCTION sample_get_list_values(
   p_uuid UUID DEFAULT NULL
-) RETURNS SETOF type_sample_get_list_users AS $FUNCTION$
+) RETURNS SETOF type_sample_get_list_values AS $FUNCTION$
 BEGIN
-  RAISE NOTICE 'sample_get_list_users';
+  RAISE NOTICE 'sample_get_list_values';
 
   RETURN QUERY
   SELECT

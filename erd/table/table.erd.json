@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "version": "1.0.0"
+  },
+  "includes": [
+    "domain.erd.json"
+  ],
+  "templates": {
+    "table": [
+      {
+        "template": "erd/table/templates/table_rs.ejs",
+        "file": "apps/services/crates/postgresql/src/table/${pname}.rs"
+      },
+      {
+        "template": "erd/table/templates/table_sql.ejs",
+        "file": "db/sql/table/${index}_${pname}.sql"
+      }
+    ]
+  },
+  "tables": [
+    {
+      "lname": "ユーザ",
+      "pname": "users",
+      "columns": [
+        {
+          "domain": "UUID",
+          "pk": true,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "lname": "ユーザ",
+          "pname": "user",
+          "domain": "名前"
+        },
+        {
+          "lname": "ユーザ",
+          "pname": "user",
+          "domain": "メール"
+        }
+      ]
+    }
+  ]
+}

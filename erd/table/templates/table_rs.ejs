@@ -1,0 +1,243 @@
+<%
+    const structName = _.upperFirst(_.camelCase(table.pname));
+    const getType = (column) => {
+        let result = '';
+        if (column.type === 'UUID') {
+            result = 'Uuid';
+        } else if (column.type === 'BIGINT') {
+            result = 'i64';
+        } else if (column.type === 'TIMESTAMPTZ') {
+            result = 'DateTime<Utc>';
+        } else if (column.type === 'TIMESTAMPTZ[]') {
+            result = 'Vec<DateTime<Utc>>';
+        } else if (column.type === 'NUMERIC') {
+            result = 'rust_decimal::Decimal';
+        } else if (column.type === 'NUMERIC[]') {
+            result = 'Vec<rust_decimal::Decimal>';
+        } else if (column.type === 'JSONB') {
+            result = 'serde_json::Value';
+        } else if (column.type === 'TEXT[]') {
+            result = 'Vec<String>';
+        } else if (column.type === 'UUID[]') {
+            result = 'Vec<Uuid>';
+        } else {
+            result = 'String';
+        }
+        return result;
+    };
+    const getRefer = (column) => {
+        let result = '';
+        if (column.type === 'UUID') {
+            result = '';
+        } else if (column.type === 'BIGINT') {
+            result = '';
+        } else if (column.type === 'TIMESTAMPTZ') {
+            result = '';
+        } else if (column.type === 'TIMESTAMPTZ[]') {
+            result = '&';
+        } else if (column.type === 'NUMERIC') {
+            result = '';
+        } else if (column.type === 'NUMERIC[]') {
+            result = '&';
+        } else if (column.type === 'JSONB') {
+            result = '&';
+        } else if (column.type === 'TEXT[]') {
+            result = '&';
+        } else if (column.type === 'UUID[]') {
+            result = '&';
+        } else {
+            result = '&';
+        }
+        return result;
+    };
+    const columns = table.columns.map((column) => {
+        let typeValue = getType(column);
+        if (!column.notNull) {
+            typeValue = `Option<${typeValue}>`;
+        }
+        return  `pub ${column.pname}: ${typeValue}`;
+    }).join(',\n    ');
+    const insertColumns = table.columns.map((column) => {
+        return  `${column.pname}`;
+    }).join('\n    ,');
+    const insertValues = table.columns.map((column, index) => {
+        return  `$${index + 1}`;
+    }).join('\n    ,');
+    const insertBinds = table.columns.map((column, index) => {
+        return  `.bind(${getRefer(column)}self.${column.pname})`;
+    }).join('\n            ');
+    const updates = table.columns.filter(column => column.pname !== 'uuid').map((column, index) => {
+        let col_text = `${column.pname} = $${index + 2}`;
+        return col_text;
+      }).join('\n    ,');
+    const selects = table.columns.map((column) => {
+        return  `t1.${column.pname}`;
+    }).join('\n    ,');
+%>use crate::Pool;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
+use derive_builder::Builder;
+use sqlx::prelude::*;
+
+const SELECT_SQL: &str = r#"
+SELECT
+    <%- selects %>
+    ,t1.created_uuid
+    ,t1.updated_uuid
+    ,t1.deleted_uuid
+    ,t1.created_at
+    ,t1.updated_at
+    ,t1.deleted_at
+    ,t1.created_pg
+    ,t1.updated_pg
+    ,t1.deleted_pg
+    ,t1.bk
+FROM
+    public.<%= table.pname %> AS t1
+"#;
+
+const INSERT_SQL: &str = r#"
+INSERT INTO public.<%= table.pname %> (
+    <%- insertColumns %>
+    ,created_uuid
+    ,updated_uuid
+    ,deleted_uuid
+    ,created_at
+    ,updated_at
+    ,deleted_at
+    ,created_pg
+    ,updated_pg
+    ,deleted_pg
+    ,bk
+) VALUES (
+    <%- insertValues %>
+    ,$<%- table.columns.length + 1 %>
+    ,$<%- table.columns.length + 2 %>
+    ,$<%- table.columns.length + 3 %>
+    ,$<%- table.columns.length + 4 %>
+    ,$<%- table.columns.length + 5 %>
+    ,$<%- table.columns.length + 6 %>
+    ,$<%- table.columns.length + 7 %>
+    ,$<%- table.columns.length + 8 %>
+    ,$<%- table.columns.length + 9 %>
+    ,$<%- table.columns.length + 10 %>
+)
+"#;
+
+const UPDATE_SQL: &str = r#"
+UPDATE public.<%= table.pname %> AS t1 SET
+    <%- updates %>
+    ,created_uuid = $<%- table.columns.length + 1 %>
+    ,updated_uuid = $<%- table.columns.length + 2 %>
+    ,deletded_uuid = $<%- table.columns.length + 3 %>
+    ,created_at = $<%- table.columns.length + 4 %>
+    ,updated_at = $<%- table.columns.length + 5 %>
+    ,deleted_at = $<%- table.columns.length + 6 %>
+    ,created_pg = $<%- table.columns.length + 7 %>
+    ,updated_pg = $<%- table.columns.length + 8 %>
+    ,deleted_pg = $<%- table.columns.length + 9 %>
+    ,bk = $<%- table.columns.length + 10 %>
+WHERE
+    t1.uuid = $1
+"#;
+
+const DELETE_SQL: &str = r#"
+DELETE FROM public.<%= table.pname %> AS t1
+WHERE
+    t1.uuid = $1
+"#;
+
+const DELETE_ALL_SQL: &str = r#"
+DELETE FROM public.<%= table.pname %> AS t1
+"#;
+
+#[derive(Serialize, Deserialize, Debug, Clone, Builder, Default, FromRow)]
+#[builder(setter(into))]
+#[builder(default)]
+#[builder(field(public))]
+pub struct <%= structName %> {
+    <%- columns %>,
+    pub created_uuid: Uuid,
+    pub updated_uuid: Uuid,
+    pub deleted_uuid: Uuid,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub deleted_at: Option<DateTime<Utc>>,
+    pub created_pg: String,
+    pub updated_pg: String,
+    pub deleted_pg: String,
+    pub bk: Option<String>,
+}
+
+impl <%= structName %> {
+    pub async fn insert(&self, pg_pool: &Pool) -> Result<(), sqlx::Error> {
+        let _ = sqlx::query(INSERT_SQL)
+            <%- insertBinds %>
+            .bind(self.created_uuid)
+            .bind(self.updated_uuid)
+            .bind(self.deleted_uuid)
+            .bind(self.created_at)
+            .bind(self.updated_at)
+            .bind(self.deleted_at)
+            .bind(&self.created_pg)
+            .bind(&self.updated_pg)
+            .bind(&self.deleted_pg)
+            .bind(&self.bk)
+            .execute(pg_pool)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn update(&self, pg_pool: &Pool) -> Result<(), sqlx::Error> {
+        let _ = sqlx::query(UPDATE_SQL)
+            <%- insertBinds %>
+            .bind(self.created_uuid)
+            .bind(self.updated_uuid)
+            .bind(self.deleted_uuid)
+            .bind(self.created_at)
+            .bind(self.updated_at)
+            .bind(self.deleted_at)
+            .bind(&self.created_pg)
+            .bind(&self.updated_pg)
+            .bind(&self.deleted_pg)
+            .bind(&self.bk)
+            .execute(pg_pool)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn delete(&self, pg_pool: &Pool) -> Result<(), sqlx::Error> {
+        Self::delete_one(pg_pool, &self.uuid).await
+    }
+
+    pub async fn delete_one(pg_pool: &Pool, uuid: &Uuid) -> Result<(), sqlx::Error> {
+        let _ = sqlx::query(DELETE_SQL)
+            .bind(uuid)
+            .execute(pg_pool)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn delete_all(pg_pool: &Pool) -> Result<(), sqlx::Error> {
+        let _ = sqlx::query(DELETE_ALL_SQL)
+            .execute(pg_pool)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn select_all(pg_pool: &Pool) -> Result<Vec<Self>, sqlx::Error> {
+        let rows: Vec<Self> = sqlx::query_as(SELECT_SQL)
+            .fetch_all(pg_pool)
+            .await?;
+        Ok(rows)
+    }
+
+    pub async fn select_one(pg_pool: &Pool, uuid: &Uuid) -> Result<Option<Self>, sqlx::Error> {
+        let one: Option<Self> = sqlx::query_as(&format!("{} WHERE t1.uuid = $1", SELECT_SQL))
+            .bind(uuid)
+            .fetch_optional(pg_pool)
+            .await?;
+        Ok(one)
+    }
+}
