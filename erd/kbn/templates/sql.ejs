@@ -1,0 +1,12 @@
+<%_
+  kbns = kbns.filter(kbn => kbn.values.length > 0)
+_%>
+  <%_ kbns.forEach(kbn => { 
+  let values = kbn.values.map(kbnValue => `'${kbnValue.pname}'`)    
+%>
+--  <%= kbn.lname %>区分
+DROP TYPE IF EXISTS type_enum_<%= kbn.pname %> CASCADE;
+CREATE TYPE type_enum_<%= kbn.pname %> AS ENUM (
+  <%- values.join('\n  ,') %>
+);
+<%_ }) _%>

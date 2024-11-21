@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": "1.0.0"
+  },
+  "templates": {
+    "kbn": [
+      {
+        "template": "erd/kbn/templates/rust.ejs",
+        "file": "apps/services/crates/postgresql/src/kbn_constants.rs"
+      },
+      {
+        "template": "erd/kbn/templates/sql.ejs",
+        "file": "db/sql/02_kbn.sql"
+      }
+    ]
+  },
+  "kbns": [
+    {
+      "lname": "ユーザー",
+      "pname": "user",
+      "code": "001",
+      "values": [
+        {
+          "lname": "一般",
+          "pname": "normal",
+          "code": "01"
+        },
+        {
+          "lname": "管理者",
+          "pname": "admin",
+          "code": "02"
+        }
+      ]
+    }
+  ]
+}

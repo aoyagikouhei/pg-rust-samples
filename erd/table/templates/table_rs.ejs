@@ -122,7 +122,18 @@ INSERT INTO public.<%= table.pname %> (
     ,$<%- table.columns.length + 8 %>
     ,$<%- table.columns.length + 9 %>
     ,$<%- table.columns.length + 10 %>
-)
+) RETURNING
+    <%- insertColumns %>
+    ,created_uuid
+    ,updated_uuid
+    ,deleted_uuid
+    ,created_at
+    ,updated_at
+    ,deleted_at
+    ,created_pg
+    ,updated_pg
+    ,deleted_pg
+    ,bk
 "#;
 
 const UPDATE_SQL: &str = r#"
@@ -140,12 +151,36 @@ UPDATE public.<%= table.pname %> AS t1 SET
     ,bk = $<%- table.columns.length + 10 %>
 WHERE
     t1.uuid = $1
+RETURNING
+    <%- insertColumns %>
+    ,created_uuid
+    ,updated_uuid
+    ,deleted_uuid
+    ,created_at
+    ,updated_at
+    ,deleted_at
+    ,created_pg
+    ,updated_pg
+    ,deleted_pg
+    ,bk
 "#;
 
 const DELETE_SQL: &str = r#"
 DELETE FROM public.<%= table.pname %> AS t1
 WHERE
     t1.uuid = $1
+RETURNING
+    <%- insertColumns %>
+    ,created_uuid
+    ,updated_uuid
+    ,deleted_uuid
+    ,created_at
+    ,updated_at
+    ,deleted_at
+    ,created_pg
+    ,updated_pg
+    ,deleted_pg
+    ,bk
 "#;
 
 const DELETE_ALL_SQL: &str = r#"
@@ -171,8 +206,8 @@ pub struct <%= structName %> {
 }
 
 impl <%= structName %> {
-    pub async fn insert(&self, pg_pool: &Pool) -> Result<(), sqlx::Error> {
-        let _ = sqlx::query(INSERT_SQL)
+    pub async fn insert(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
+        sqlx::query_as(INSERT_SQL)
             <%- insertBinds %>
             .bind(self.created_uuid)
             .bind(self.updated_uuid)
@@ -184,13 +219,12 @@ impl <%= structName %> {
             .bind(&self.updated_pg)
             .bind(&self.deleted_pg)
             .bind(&self.bk)
-            .execute(pg_pool)
-            .await?;
-        Ok(())
+            .fetch_one(pg_pool)
+            .await
     }
 
-    pub async fn update(&self, pg_pool: &Pool) -> Result<(), sqlx::Error> {
-        let _ = sqlx::query(UPDATE_SQL)
+    pub async fn update(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
+        sqlx::query_as(UPDATE_SQL)
             <%- insertBinds %>
             .bind(self.created_uuid)
             .bind(self.updated_uuid)
@@ -202,21 +236,19 @@ impl <%= structName %> {
             .bind(&self.updated_pg)
             .bind(&self.deleted_pg)
             .bind(&self.bk)
-            .execute(pg_pool)
-            .await?;
-        Ok(())
+            .fetch_one(pg_pool)
+            .await
     }
 
-    pub async fn delete(&self, pg_pool: &Pool) -> Result<(), sqlx::Error> {
+    pub async fn delete(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
         Self::delete_one(pg_pool, &self.uuid).await
     }
 
-    pub async fn delete_one(pg_pool: &Pool, uuid: &Uuid) -> Result<(), sqlx::Error> {
-        let _ = sqlx::query(DELETE_SQL)
+    pub async fn delete_one(pg_pool: &Pool, uuid: &Uuid) -> Result<Self, sqlx::Error> {
+        sqlx::query_as(DELETE_SQL)
             .bind(uuid)
-            .execute(pg_pool)
-            .await?;
-        Ok(())
+            .fetch_one(pg_pool)
+            .await
     }
 
     pub async fn delete_all(pg_pool: &Pool) -> Result<(), sqlx::Error> {

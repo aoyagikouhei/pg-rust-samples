@@ -19,13 +19,43 @@
   },
   "tables": [
     {
-      "lname": "ユーザ",
-      "pname": "users",
+      "lname": "企業",
+      "pname": "companies",
       "columns": [
         {
           "domain": "UUID",
           "pk": true,
           "default": "gen_random_uuid()"
+        },
+        {
+          "lname": "企業",
+          "pname": "company",
+          "domain": "名前"
+        }
+      ]
+    },
+    {
+      "lname": "ユーザ",
+      "pname": "users",
+      "metadata": {
+        "fks": [
+          {
+            "table": "companies",
+            "src": ["uuid"],
+            "dst": ["company_uuid"]
+          }
+        ]
+      },
+      "columns": [
+        {
+          "domain": "UUID",
+          "pk": true,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "pname": "company",
+          "lname": "企業",
+          "domain": "UUID"
         },
         {
           "lname": "ユーザ",
@@ -36,6 +66,11 @@
           "lname": "ユーザ",
           "pname": "user",
           "domain": "メール"
+        },
+        {
+          "lname": "ユーザ",
+          "pname": "user",
+          "domain": "区分"
         }
       ]
     }

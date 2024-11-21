@@ -1,0 +1,34 @@
+DROP TABLE IF EXISTS public.companies CASCADE;
+DROP TABLE IF EXISTS garbage.companies CASCADE;
+
+CREATE TABLE public.companies (
+  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  ,company_name TEXT NOT NULL DEFAULT '' -- 企業名
+  ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,deleted_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,created_at TIMESTAMPTZ NOT NULL
+  ,updated_at TIMESTAMPTZ NOT NULL
+  ,deleted_at TIMESTAMPTZ
+  ,created_pg TEXT NOT NULL DEFAULT ''
+  ,updated_pg TEXT NOT NULL DEFAULT ''
+  ,deleted_pg TEXT NOT NULL DEFAULT ''
+  ,bk TEXT
+  ,PRIMARY KEY(uuid)  
+);
+
+CREATE TABLE garbage.companies (
+  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  ,company_name TEXT NOT NULL DEFAULT '' -- 企業名
+  ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,deleted_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+  ,created_at TIMESTAMPTZ NOT NULL
+  ,updated_at TIMESTAMPTZ NOT NULL
+  ,deleted_at TIMESTAMPTZ
+  ,created_pg TEXT NOT NULL DEFAULT ''
+  ,updated_pg TEXT NOT NULL DEFAULT ''
+  ,deleted_pg TEXT NOT NULL DEFAULT ''
+  ,bk TEXT
+  ,PRIMARY KEY(uuid) 
+);

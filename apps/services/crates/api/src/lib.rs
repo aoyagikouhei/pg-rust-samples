@@ -17,7 +17,7 @@ pub async fn execute() -> anyhow::Result<()> {
         .create();
 
     let client = reqwest::Client::new();
-    let response = client.get(&format!("{}/hello", url)).send().await?;
+    let response = client.get(format!("{}/hello", url)).send().await?;
     assert_eq!(response.status(), 201);
     assert_eq!("world", response.text().await?);
 

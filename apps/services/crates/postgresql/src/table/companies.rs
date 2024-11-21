@@ -8,10 +8,7 @@ use uuid::Uuid;
 const SELECT_SQL: &str = r#"
 SELECT
     t1.uuid
-    ,t1.company_uuid
-    ,t1.user_name
-    ,t1.user_mail
-    ,t1.user_kbn
+    ,t1.company_name
     ,t1.created_uuid
     ,t1.updated_uuid
     ,t1.deleted_uuid
@@ -23,16 +20,13 @@ SELECT
     ,t1.deleted_pg
     ,t1.bk
 FROM
-    public.users AS t1
+    public.companies AS t1
 "#;
 
 const INSERT_SQL: &str = r#"
-INSERT INTO public.users (
+INSERT INTO public.companies (
     uuid
-    ,company_uuid
-    ,user_name
-    ,user_mail
-    ,user_kbn
+    ,company_name
     ,created_uuid
     ,updated_uuid
     ,deleted_uuid
@@ -56,15 +50,9 @@ INSERT INTO public.users (
     ,$10
     ,$11
     ,$12
-    ,$13
-    ,$14
-    ,$15
 ) RETURNING
     uuid
-    ,company_uuid
-    ,user_name
-    ,user_mail
-    ,user_kbn
+    ,company_name
     ,created_uuid
     ,updated_uuid
     ,deleted_uuid
@@ -78,29 +66,23 @@ INSERT INTO public.users (
 "#;
 
 const UPDATE_SQL: &str = r#"
-UPDATE public.users AS t1 SET
-    company_uuid = $2
-    ,user_name = $3
-    ,user_mail = $4
-    ,user_kbn = $5
-    ,created_uuid = $6
-    ,updated_uuid = $7
-    ,deletded_uuid = $8
-    ,created_at = $9
-    ,updated_at = $10
-    ,deleted_at = $11
-    ,created_pg = $12
-    ,updated_pg = $13
-    ,deleted_pg = $14
-    ,bk = $15
+UPDATE public.companies AS t1 SET
+    company_name = $2
+    ,created_uuid = $3
+    ,updated_uuid = $4
+    ,deletded_uuid = $5
+    ,created_at = $6
+    ,updated_at = $7
+    ,deleted_at = $8
+    ,created_pg = $9
+    ,updated_pg = $10
+    ,deleted_pg = $11
+    ,bk = $12
 WHERE
     t1.uuid = $1
 RETURNING
     uuid
-    ,company_uuid
-    ,user_name
-    ,user_mail
-    ,user_kbn
+    ,company_name
     ,created_uuid
     ,updated_uuid
     ,deleted_uuid
@@ -114,15 +96,12 @@ RETURNING
 "#;
 
 const DELETE_SQL: &str = r#"
-DELETE FROM public.users AS t1
+DELETE FROM public.companies AS t1
 WHERE
     t1.uuid = $1
 RETURNING
     uuid
-    ,company_uuid
-    ,user_name
-    ,user_mail
-    ,user_kbn
+    ,company_name
     ,created_uuid
     ,updated_uuid
     ,deleted_uuid
@@ -136,19 +115,16 @@ RETURNING
 "#;
 
 const DELETE_ALL_SQL: &str = r#"
-DELETE FROM public.users AS t1
+DELETE FROM public.companies AS t1
 "#;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Builder, Default, FromRow)]
 #[builder(setter(into))]
 #[builder(default)]
 #[builder(field(public))]
-pub struct Users {
+pub struct Companies {
     pub uuid: Uuid,
-    pub company_uuid: Uuid,
-    pub user_name: String,
-    pub user_mail: String,
-    pub user_kbn: String,
+    pub company_name: String,
     pub created_uuid: Uuid,
     pub updated_uuid: Uuid,
     pub deleted_uuid: Uuid,
@@ -161,14 +137,11 @@ pub struct Users {
     pub bk: Option<String>,
 }
 
-impl Users {
+impl Companies {
     pub async fn insert(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
         sqlx::query_as(INSERT_SQL)
             .bind(self.uuid)
-            .bind(self.company_uuid)
-            .bind(&self.user_name)
-            .bind(&self.user_mail)
-            .bind(&self.user_kbn)
+            .bind(&self.company_name)
             .bind(self.created_uuid)
             .bind(self.updated_uuid)
             .bind(self.deleted_uuid)
@@ -186,10 +159,7 @@ impl Users {
     pub async fn update(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
         sqlx::query_as(UPDATE_SQL)
             .bind(self.uuid)
-            .bind(self.company_uuid)
-            .bind(&self.user_name)
-            .bind(&self.user_mail)
-            .bind(&self.user_kbn)
+            .bind(&self.company_name)
             .bind(self.created_uuid)
             .bind(self.updated_uuid)
             .bind(self.deleted_uuid)

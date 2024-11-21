@@ -8,4 +8,5 @@ chrono = { workspace = true }
 derive_builder = { workspace = true }
 serde = { workspace = true }
 sqlx = { workspace = true }
+strum = { workspace = true }
 uuid = { workspace = true }
