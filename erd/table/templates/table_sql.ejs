@@ -5,6 +5,9 @@
     if (column.type == 'BIGINT' && column.pk && column.pname == 'id') {
       return 'BIGSERIAL';
     }
+    if (column.domain == '区分') {
+      return 'type_enum_' + column.pname.replace('_kbn', '');
+    }
     return column.type;
   };
   const columns = table.columns.map((column) => {

@@ -12,4 +12,11 @@ use strum::{Display, EnumString};
 pub enum <%= camelize(kbn.pname) %>Kbn {
     <%- values.join("\n    ") %>
 }
+
+impl Default for <%= camelize(kbn.pname) %>Kbn {
+    fn default() -> Self {
+        Self::<%= camelize(kbn.values[0].pname) %>
+    }
+}
+
 <% }) %>

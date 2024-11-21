@@ -6,7 +6,7 @@ CREATE TABLE public.users (
   ,company_uuid UUID NOT NULL -- 企業UUID
   ,user_name TEXT NOT NULL DEFAULT '' -- ユーザ名
   ,user_mail TEXT NOT NULL DEFAULT '' -- ユーザメール
-  ,user_kbn TEXT NOT NULL DEFAULT '' -- ユーザ区分
+  ,user_kbn type_enum_user NOT NULL DEFAULT 'normal' -- ユーザ区分
   ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,deleted_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
@@ -26,7 +26,7 @@ CREATE TABLE garbage.users (
   ,company_uuid UUID NOT NULL -- 企業UUID
   ,user_name TEXT NOT NULL DEFAULT '' -- ユーザ名
   ,user_mail TEXT NOT NULL DEFAULT '' -- ユーザメール
-  ,user_kbn TEXT NOT NULL DEFAULT '' -- ユーザ区分
+  ,user_kbn type_enum_user NOT NULL DEFAULT 'normal' -- ユーザ区分
   ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,deleted_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'

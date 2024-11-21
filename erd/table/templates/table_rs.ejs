@@ -20,6 +20,8 @@
             result = 'Vec<String>';
         } else if (column.type === 'UUID[]') {
             result = 'Vec<Uuid>';
+        } else if (column.domain === '区分') {
+            result = `crate::kbn_constants::${_.upperFirst(_.camelCase(column.pname))}`;
         } else {
             result = 'String';
         }

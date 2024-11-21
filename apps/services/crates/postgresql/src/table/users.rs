@@ -148,7 +148,7 @@ pub struct Users {
     pub company_uuid: Uuid,
     pub user_name: String,
     pub user_mail: String,
-    pub user_kbn: String,
+    pub user_kbn: crate::kbn_constants::UserKbn,
     pub created_uuid: Uuid,
     pub updated_uuid: Uuid,
     pub deleted_uuid: Uuid,

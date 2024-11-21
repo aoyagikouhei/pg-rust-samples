@@ -1,3 +1,5 @@
+use uuid::Uuid;
+
 use crate::prelude::*;
 
 use crate::Pool;
@@ -9,6 +11,9 @@ pub async fn make_companies(
     pool: &Pool,
     builder: &mut companies::CompaniesBuilder,
 ) -> Result<Companies, sqlx::Error> {
+    if builder.uuid.is_none() {
+        builder.uuid(Uuid::new_v4());
+    }
     if builder.company_name.is_none() {
         builder.company_name("UV");
     }
@@ -19,6 +24,9 @@ pub async fn make_users(
     pool: &Pool,
     builder: &mut users::UsersBuilder,
 ) -> Result<Users, sqlx::Error> {
+    if builder.uuid.is_none() {
+        builder.uuid(Uuid::new_v4());
+    }
     if builder.user_name.is_none() {
         builder.user_name("taro");
     }
