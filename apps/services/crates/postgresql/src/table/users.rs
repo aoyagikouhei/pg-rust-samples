@@ -140,9 +140,7 @@ DELETE FROM public.users AS t1
 "#;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Builder, Default, FromRow)]
-#[builder(setter(into))]
-#[builder(default)]
-#[builder(field(public))]
+#[builder(setter(into), default, field(public))]
 pub struct Users {
     pub uuid: Uuid,
     pub company_uuid: Uuid,
