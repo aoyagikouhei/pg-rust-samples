@@ -1,9 +1,9 @@
 use crate::Pool;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::*;
 use uuid::Uuid;
+use derive_builder::Builder;
+use sqlx::prelude::*;
 
 const SELECT_SQL: &str = r#"
 SELECT
@@ -119,9 +119,7 @@ DELETE FROM public.companies AS t1
 "#;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Builder, Default, FromRow)]
-#[builder(setter(into))]
-#[builder(default)]
-#[builder(field(public))]
+#[builder(setter(into), default, field(public))]
 pub struct Companies {
     pub uuid: Uuid,
     pub company_name: String,
@@ -138,7 +136,7 @@ pub struct Companies {
 }
 
 impl Companies {
-    pub async fn insert(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
+    pub async fn insert(&self, pool: &Pool) -> Result<Self, sqlx::Error> {
         sqlx::query_as(INSERT_SQL)
             .bind(self.uuid)
             .bind(&self.company_name)
@@ -152,11 +150,11 @@ impl Companies {
             .bind(&self.updated_pg)
             .bind(&self.deleted_pg)
             .bind(&self.bk)
-            .fetch_one(pg_pool)
+            .fetch_one(pool)
             .await
     }
 
-    pub async fn update(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
+    pub async fn update(&self, pool: &Pool) -> Result<Self, sqlx::Error> {
         sqlx::query_as(UPDATE_SQL)
             .bind(self.uuid)
             .bind(&self.company_name)
@@ -170,35 +168,39 @@ impl Companies {
             .bind(&self.updated_pg)
             .bind(&self.deleted_pg)
             .bind(&self.bk)
-            .fetch_one(pg_pool)
+            .fetch_one(pool)
             .await
     }
 
-    pub async fn delete(&self, pg_pool: &Pool) -> Result<Self, sqlx::Error> {
-        Self::delete_one(pg_pool, &self.uuid).await
+    pub async fn delete(&self, pool: &Pool) -> Result<Self, sqlx::Error> {
+        Self::delete_one(pool, &self.uuid).await
     }
 
-    pub async fn delete_one(pg_pool: &Pool, uuid: &Uuid) -> Result<Self, sqlx::Error> {
+    pub async fn delete_one(pool: &Pool, uuid: &Uuid) -> Result<Self, sqlx::Error> {
         sqlx::query_as(DELETE_SQL)
             .bind(uuid)
-            .fetch_one(pg_pool)
+            .fetch_one(pool)
             .await
     }
 
-    pub async fn delete_all(pg_pool: &Pool) -> Result<(), sqlx::Error> {
-        let _ = sqlx::query(DELETE_ALL_SQL).execute(pg_pool).await?;
+    pub async fn delete_all(pool: &Pool) -> Result<(), sqlx::Error> {
+        let _ = sqlx::query(DELETE_ALL_SQL)
+            .execute(pool)
+            .await?;
         Ok(())
     }
 
-    pub async fn select_all(pg_pool: &Pool) -> Result<Vec<Self>, sqlx::Error> {
-        let rows: Vec<Self> = sqlx::query_as(SELECT_SQL).fetch_all(pg_pool).await?;
+    pub async fn select_all(pool: &Pool) -> Result<Vec<Self>, sqlx::Error> {
+        let rows: Vec<Self> = sqlx::query_as(SELECT_SQL)
+            .fetch_all(pool)
+            .await?;
         Ok(rows)
     }
 
-    pub async fn select_one(pg_pool: &Pool, uuid: &Uuid) -> Result<Option<Self>, sqlx::Error> {
+    pub async fn select_one(pool: &Pool, uuid: &Uuid) -> Result<Option<Self>, sqlx::Error> {
         let one: Option<Self> = sqlx::query_as(&format!("{} WHERE t1.uuid = $1", SELECT_SQL))
             .bind(uuid)
-            .fetch_optional(pg_pool)
+            .fetch_optional(pool)
             .await?;
         Ok(one)
     }
