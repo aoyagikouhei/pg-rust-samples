@@ -15,7 +15,7 @@ mod tests {
     }
     #[tokio::test]
     async fn test_fragile_function() -> anyhow::Result<()> {
-        let pool = setup_test("postgres://user:pass@localhost/web", 5).await?;
+        let (pool, _) = setup_test().await?;
         add_user(&pool, "taro", "taro@example.com").await?;
         add_user(&pool, "jiro", "jiro@example.com").await?;
         let users = Users::select_all(&pool).await?;

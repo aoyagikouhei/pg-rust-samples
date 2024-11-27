@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use common::config::Config;
 use sqlx::postgres::PgPoolOptions;
 pub mod table;
 pub use sqlx;
@@ -27,10 +28,11 @@ pub async fn clear_db(pool: &Pool) -> Result<(), sqlx::Error> {
     Ok(())
 }
 
-pub async fn setup_test(url: &str, max_connections: u32) -> Result<Pool, sqlx::Error> {
-    let pool = get_postgres_pool(url, max_connections).await?;
+pub async fn setup_test() -> Result<(Pool, Config), sqlx::Error> {
+    let config = Config::setup().await.unwrap();
+    let pool = get_postgres_pool(&config.pg_url, config.max_connections).await?;
     clear_db(&pool).await?;
-    Ok(pool)
+    Ok((pool, config))
 }
 
 pub async fn execute_sql(pool: &Pool, sql: &str) -> Result<(), sqlx::Error> {

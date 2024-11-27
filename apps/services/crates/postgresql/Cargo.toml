@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 chrono = { workspace = true }
+common = { path = "../common" }
 derive_builder = { workspace = true }
 serde = { workspace = true }
 sqlx = { workspace = true }

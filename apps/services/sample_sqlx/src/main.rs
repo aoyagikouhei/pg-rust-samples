@@ -1,4 +1,7 @@
 use sqlx::postgres::PgPoolOptions;
+mod composit;
+mod type_check;
+mod user_sample;
 
 // RUST_LOG=info cargo run
 #[tokio::main]
@@ -10,9 +13,9 @@ async fn main() -> anyhow::Result<()> {
         .connect("postgres://user:pass@postgresql/web")
         .await?;
 
-    common::type_check::execute(&pool).await?;
-    common::user_sample::execute(&pool).await?;
-    common::composit::execute(&pool).await?;
+    type_check::execute(&pool).await?;
+    user_sample::execute(&pool).await?;
+    composit::execute(&pool).await?;
 
     api::execute()?;
     Ok(())

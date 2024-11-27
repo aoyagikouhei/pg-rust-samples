@@ -6,7 +6,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_fragile_builder() -> anyhow::Result<()> {
-        let pool = setup_test("postgres://user:pass@postgresql/web", 5).await?;
+        let (pool, _) = setup_test().await?;
         let company =
             make_companies(&pool, CompaniesBuilder::default().company_name("company")).await?;
         let _ = make_users(
