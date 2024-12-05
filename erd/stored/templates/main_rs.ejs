@@ -1,0 +1,165 @@
+<%
+    let result = ""
+    let uuidFlag = false;
+    let input_struct = struct
+    if (struct.option.type === "output") {
+        result = "aaa"
+        input_struct = structs.find((it) => {
+            return it.pname === struct.pname && it.option.type === "input"
+        })
+    }
+
+    const getType = (column) => {
+        let result = '';
+        if (column.type === 'UUID') {
+            result = 'Uuid';
+        } else if (column.type === 'BIGINT') {
+            result = 'i64';
+        } else if (column.type === 'TIMESTAMPTZ') {
+            result = 'DateTime<Utc>';
+        } else if (column.type === 'TIMESTAMPTZ[]') {
+            result = 'Vec<DateTime<Utc>>';
+        } else if (column.type === 'NUMERIC') {
+            result = 'rust_decimal::Decimal';
+        } else if (column.type === 'NUMERIC[]') {
+            result = 'Vec<rust_decimal::Decimal>';
+        } else if (column.type === 'JSONB') {
+            result = 'serde_json::Value';
+        } else if (column.type === 'TEXT[]') {
+            result = 'Vec<String>';
+        } else if (column.type === 'UUID[]') {
+            result = 'Vec<Uuid>';
+        } else if (column.type === 'BOOLEAN') {
+            result = 'bool';
+        } else {
+            result = 'String';
+        }
+        return result;
+    }
+
+    const getRefer = (column) => {
+        let result = '';
+        if (column.type === 'UUID') {
+            result = '';
+        } else if (column.type === 'BIGINT') {
+            result = '';
+        } else if (column.type === 'TIMESTAMPTZ') {
+            result = '';
+        } else if (column.type === 'TIMESTAMPTZ[]') {
+            result = '&';
+        } else if (column.type === 'NUMERIC') {
+            result = '';
+        } else if (column.type === 'NUMERIC[]') {
+            result = '&';
+        } else if (column.type === 'JSONB') {
+            result = '&';
+        } else if (column.type === 'TEXT[]') {
+            result = '&';
+        } else if (column.type === 'UUID[]') {
+            result = '&';
+        } else {
+            result = '&';
+        }
+        return result;
+    };
+
+    const input_columns = input_struct.parameters.map((it) => {
+        let typeValue = getType(it);
+        if (typeValue === 'Uuid') {
+            uuidFlag = true;
+        }
+        if (!it.notNull) {
+            typeValue = `Option<${typeValue}>`;
+        }
+        return  `pub ${it.pname}: ${typeValue},`;
+    }).join('\n    ');
+
+    const output_columns = struct.parameters.map((it) => {
+        let typeValue = getType(it);
+        if (typeValue === 'Uuid') {
+            uuidFlag = true;
+        }
+        if (!it.notNull) {
+            typeValue = `Option<${typeValue}>`;
+        }
+        return  `pub ${it.pname}: ${typeValue}`;
+    }).join(',\n    ');
+
+    const args = input_struct.parameters.map((it, index) => {
+        return  `p_${it.pname} := $${index + 1}`;
+    }).join('\n        ,');
+
+    const binds = input_struct.parameters.map((it) => {
+        return  `.bind(${getRefer(it)}params.${it.pname})`;
+    }).join('\n        ');
+
+%>use serde::{Deserialize, Serialize};
+use chrono::prelude::*;
+use sqlx::prelude::*;
+use derive_builder::Builder;<%= uuidFlag ? "\nuse uuid::Uuid;" : "" %>
+
+#[derive(Serialize, Deserialize, Debug, Clone, Builder, Default, PartialEq, Eq)]
+#[builder(setter(into))]
+#[builder(default)]
+#[builder(field(public))]
+pub struct DbInput {
+    <%- input_columns %>
+    pub now: Option<DateTime<Utc>>,
+    pub pg: Option<String>,
+    pub operator_uuid: Option<Uuid>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Builder, Default, PartialEq, Eq, FromRow)]
+#[builder(setter(into))]
+#[builder(default)]
+#[builder(field(public))]
+pub struct DbOutput {
+    <%- output_columns %>
+}
+
+const SQL: &str = r#"
+SELECT
+    t1.*
+FROM
+    <%= struct.pname %>(
+        <%- args %>
+        ,p_now := $<%= input_struct.parameters.length + 1 %>
+        ,p_pg := $<%= input_struct.parameters.length + 2 %>
+        ,p_operator_uuid := $<%= input_struct.parameters.length + 3 %>
+    ) AS t1
+"#;
+
+pub async fn execute(
+    pg_pool: &crate::Pool,
+    params: DbInput,
+) -> Result<Vec<DbOutput>, sqlx::Error> {
+    let res: Vec<DbOutput> = sqlx::query_as(SQL)
+        <%- binds %>
+        .bind(params.now)
+        .bind(&params.pg)
+        .bind(params.operator_uuid)
+        .fetch_all(pg_pool)
+        .await?;
+    Ok(res)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{prelude::*, setup_test};
+
+    // RUST_LOG=info REALM_CODE=test cargo test -p postgresql test_postgresql_<%= struct.pname %> -- --nocapture --test-threads=1
+    #[tokio::test]
+    async fn test_postgresql_<%= struct.pname %> () -> anyhow::Result<()> {
+        let (pool, _) = setup_test().await?;
+
+        let params = DbInput {
+            ..Default::default()
+        };
+
+        let result = execute(&pool, params).await?;
+        assert_eq!(result.len(), 0);
+
+        Ok(())
+    }
+}

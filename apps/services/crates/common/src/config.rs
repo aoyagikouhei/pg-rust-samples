@@ -14,8 +14,12 @@ pub struct Config {
 
 impl Config {
     pub async fn new() -> Result<Self, Error> {
-        let pg_url = std::env::var("PG_URL").unwrap_or("postgres://user:pass@postgresql/web".to_string());
-        let max_connections = std::env::var("MAX_CONNECTIONS").unwrap_or("5".to_string()).parse::<u32>().unwrap_or(5);
+        let pg_url =
+            std::env::var("PG_URL").unwrap_or("postgres://user:pass@postgresql/web".to_string());
+        let max_connections = std::env::var("MAX_CONNECTIONS")
+            .unwrap_or("5".to_string())
+            .parse::<u32>()
+            .unwrap_or(5);
         Ok(Self {
             pg_url,
             max_connections,

@@ -1,0 +1,56 @@
+{
+    "meta": {
+      "version": "1.0.0"
+    },
+    "includes": [
+      "_domain.erd.json"
+    ],
+    "templates": {
+      "struct": [
+        {
+          "template": "erd/stored/templates/stored_template.ejs",
+          "file": "db/sql/stored/${pname}.sql_template"
+        },
+        {
+          "template": "erd/stored/templates/main_rs.ejs",
+          "file": "apps/services/crates/postgresql/src/custom/${pname}.rs_template"
+        }
+      ]
+    },
+    "structs": [
+      {
+        "lname": "企業取得インプット",
+        "pname": "sample_get_list_companies",
+        "option": {
+          "type": "input"
+        },
+        "parameters": [
+          {
+            "lname": "企業",
+            "pname": "company",
+            "domain": "名前"
+          }
+        ]
+      },
+      {
+        "lname": "企業取得アウトプット",
+        "pname": "sample_get_list_companies",
+        "option": {
+          "type": "output"
+        },
+        "parameters": [
+          {
+            "lname": "企業",
+            "pname": "company",
+            "domain": "UUID"
+          },
+          {
+            "lname": "企業",
+            "pname": "company",
+            "domain": "名前"
+          }
+        ]
+      }
+    ]
+  }
+  

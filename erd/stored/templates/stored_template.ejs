@@ -1,0 +1,45 @@
+<%
+    let result = ""
+    let input_struct = struct
+    if (struct.option.type === "output") {
+        result = "aaa"
+        input_struct = structs.find((it) => {
+            return it.pname === struct.pname && it.option.type === "input"
+        })
+    }
+
+    const output_types = struct.parameters.map((it) => {
+        return `${it.pname} ${it.type}`
+    }).join('\n  ,');
+
+    const input_params = input_struct.parameters.map((it) => {
+        return `p_${it.pname} ${it.type} DEFAULT NULL`
+    }).join('\n  ,');
+
+    const raise_persent = input_struct.parameters.map((it) => {
+      return `p_${it.pname} = %`
+    }).join(', ');
+
+    const raise_params = input_struct.parameters.map((it) => {
+      return `p_${it.pname}`
+  }).join(', ');
+
+%>DROP TYPE IF EXISTS type_<%= struct.pname %> CASCADE;
+CREATE TYPE type_<%= struct.pname %> AS (
+  <%= output_types %>
+);
+
+CREATE OR REPLACE FUNCTION <%= struct.pname %> (
+  <%= input_params %>
+  ,p_now TIMESTAMPTZ DEFAULT NULL
+  ,p_pg TEXT DEFAULT NULL
+  ,p_operator_uuid UUID DEFAULT NULL
+) RETURNS SETOF type_<%= struct.pname %> AS $FUNCTION$
+DECLARE
+  w_now TIMESTAMPTZ := COALESCE(p_now, NOW());
+  w_pg TEXT := COALESCE(p_pg, '<%= struct.pname %>');
+  w_operator_uuid UUID := COALESCE(p_operator_uuid, '00000000-0000-0000-0000-000000000000');
+BEGIN
+  RAISE NOTICE '<%= struct.pname %> started <%= raise_persent %>', <%= raise_params %>;
+END;
+$FUNCTION$ LANGUAGE plpgsql;
