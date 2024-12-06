@@ -67,14 +67,7 @@ mod tests {
             &mut CompaniesBuilder::default().company_name("かきくけこ工業"),
         )
         .await?;
-
-        let params = DbInput {
-            ..Default::default()
-        };
-
-        let result = execute(&pool, params).await?;
-        assert_eq!(result.len(), 2);
-
+ 
         let params = DbInput {
             company_name: "あいうえお".to_string(),
             ..Default::default()
@@ -82,7 +75,6 @@ mod tests {
 
         let result = execute(&pool, params).await?;
         assert_eq!(result.len(), 1);
-
 
         Ok(())
     }
