@@ -1,8 +1,6 @@
 <%
-    let result = ""
     let input_struct = struct
     if (struct.option.type === "output") {
-        result = "aaa"
         input_struct = structs.find((it) => {
             return it.pname === struct.pname && it.option.type === "input"
         })
