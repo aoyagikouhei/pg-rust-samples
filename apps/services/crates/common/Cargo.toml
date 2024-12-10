@@ -6,11 +6,14 @@ edition = "2021"
 [dependencies]
 bit-vec = { workspace = true }
 chrono = { workspace = true }
+rand = { workspace = true }
 rust_decimal = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 sqlx = { workspace = true }
 thiserror = { workspace = true }
+unicode-normalization = { workspace = true }
+unicode-segmentation = { workspace = true }
 uuid = { workspace = true }
 
 
