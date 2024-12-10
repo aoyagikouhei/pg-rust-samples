@@ -67,7 +67,7 @@ mod tests {
             &mut CompaniesBuilder::default().company_name("かきくけこ工業"),
         )
         .await?;
- 
+
         let params = DbInput {
             company_name: "あいうえお".to_string(),
             ..Default::default()

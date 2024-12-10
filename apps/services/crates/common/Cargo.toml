@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+aes = { workspace = true }
 bit-vec = { workspace = true }
+ctr = { workspace = true }
 chrono = { workspace = true }
 rand = { workspace = true }
 rust_decimal = { workspace = true }

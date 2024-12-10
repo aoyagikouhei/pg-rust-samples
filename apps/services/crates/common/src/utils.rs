@@ -1,8 +1,8 @@
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
-use unicode_normalization::UnicodeNormalization;
 use std::collections::HashMap;
 use std::sync::LazyLock;
+use unicode_normalization::UnicodeNormalization;
 use unicode_segmentation::UnicodeSegmentation;
 
 pub fn random_string(length: usize) -> String {
@@ -23,19 +23,19 @@ static MAP: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
     map.insert("１", "1");
     map.insert("＃", "#");
     map.insert("＠", "@");
-    map.insert("ｱ",  "ア");
+    map.insert("ｱ", "ア");
     map.insert("ｰ", "ー");
     map.insert("ｶﾞ", "ガ");
     map
 });
 
 pub fn special_normalize_string(src: &str) -> String {
-    src.graphemes(true).map(|c| {
-        match MAP.get(c) {
+    src.graphemes(true)
+        .map(|c| match MAP.get(c) {
             Some(v) => *v,
             None => c,
-        }
-    }).collect::<String>()
+        })
+        .collect::<String>()
 }
 
 #[cfg(test)]
