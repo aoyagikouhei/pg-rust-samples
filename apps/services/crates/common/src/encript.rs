@@ -16,15 +16,15 @@ pub enum EncryptError {
 }
 
 // 暗号化
-pub fn encrypt_with_base64(key: &[u8], data: &str) -> Result<String, EncryptError> {
-    let res = encrypt(key, data.as_bytes())?;
+pub fn encrypt_with_base64(key: &str, data: &str) -> Result<String, EncryptError> {
+    let res = encrypt(key.as_bytes(), data.as_bytes())?;
     Ok(BASE64_STANDARD.encode(res))
 }
 
 // 復号化
-pub fn decrypt_with_base64(key: &[u8], data: &str) -> Result<String, EncryptError> {
+pub fn decrypt_with_base64(key: &str, data: &str) -> Result<String, EncryptError> {
     let data = BASE64_STANDARD.decode(data)?;
-    let plaintext = decrypt(key, &data)?;
+    let plaintext = decrypt(key.as_bytes(), &data)?;
     String::from_utf8(plaintext.to_vec()).map_err(|e| e.into())
 }
 
@@ -54,9 +54,9 @@ mod tests {
     #[tokio::test]
     async fn test_common_encript_chacha20() -> anyhow::Result<()> {
         let plaintext = "予定表～①💖ﾊﾝｶｸだ";
-        let key = "01234567012345670123456701234567";
-        let enc = encrypt_with_base64(key.as_bytes(), plaintext)?;
-        let dec = decrypt_with_base64(key.as_bytes(), &enc)?;
+        let key = "01234567012345670123456701234567"; // 32byte
+        let enc = encrypt_with_base64(key, plaintext)?;
+        let dec = decrypt_with_base64(key, &enc)?;
         assert_eq!(plaintext, dec);
         println!("{},{}", enc, dec);
         Ok(())
