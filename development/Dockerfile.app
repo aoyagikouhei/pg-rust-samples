@@ -1,4 +1,4 @@
-FROM rust:1.82
+FROM rust:1.83
 
 RUN apt -y update && apt -y install musl-tools libssl-dev pkg-config build-essential postgresql-client
 
