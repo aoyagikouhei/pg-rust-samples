@@ -41,3 +41,13 @@ pub async fn execute_sql(pool: &Pool, sql: &str) -> Result<(), sqlx::Error> {
     sqlx::query(sql).execute(pool).await?;
     Ok(())
 }
+
+pub fn get_code(e: sqlx::Error) -> Option<String> {
+    match e {
+        sqlx::Error::Database(db_err) => {
+            let code = db_err.code();
+            code.map(|c| c.to_string())
+        }
+        _ => None,
+    }
+}

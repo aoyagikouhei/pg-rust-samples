@@ -2,6 +2,7 @@ use sqlx::postgres::PgPoolOptions;
 mod composit;
 mod type_check;
 mod user_sample;
+mod stream;
 
 // RUST_LOG=info cargo run
 #[tokio::main]
@@ -16,6 +17,7 @@ async fn main() -> anyhow::Result<()> {
     type_check::execute(&pool).await?;
     user_sample::execute(&pool).await?;
     composit::execute(&pool).await?;
+    stream::execute(&pool).await?;
 
     api::execute()?;
     Ok(())

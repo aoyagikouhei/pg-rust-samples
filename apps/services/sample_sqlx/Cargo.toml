@@ -10,6 +10,7 @@ bit-vec = { workspace = true }
 common = { path = "../crates/common" }
 chrono = { workspace = true }
 env_logger = { workspace = true }
+futures-util = { workspace = true }
 rust_decimal = { workspace = true }
 serde_json = { workspace = true }
 sqlx = { workspace = true }
