@@ -18,17 +18,14 @@
     {
       "lname": "ユーザー",
       "pname": "user",
-      "code": "001",
       "values": [
         {
           "lname": "一般",
-          "pname": "normal",
-          "code": "01"
+          "pname": "normal"
         },
         {
           "lname": "管理者",
-          "pname": "admin",
-          "code": "02"
+          "pname": "admin"
         }
       ]
     }
