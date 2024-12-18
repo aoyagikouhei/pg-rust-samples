@@ -25,7 +25,6 @@ mod tests {
         .await?;
         let users = Users::select_all(&pool).await?;
         assert_eq!(users.len(), 2);
-        println!("{:?}", users);
         Ok(())
     }
 }

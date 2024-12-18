@@ -9,9 +9,12 @@ mod tests {
         Ok(())
     }
 
+    // RUST_LOG=info cargo test -p fragile test_fragile_fixture -- --nocapture --test-threads=1
+
     #[tokio::test]
     async fn test_fragile_fixture() -> anyhow::Result<()> {
         let (pool, _) = setup_test().await?;
+        fixtrue(&pool, "company").await?;
         fixtrue(&pool, "user_taro").await?;
         fixtrue(&pool, "user_jiro").await?;
         let result = Users::select_all(&pool).await?;
