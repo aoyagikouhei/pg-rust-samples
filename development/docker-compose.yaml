@@ -19,7 +19,7 @@ services:
       - seccomp:unconfined
 
   postgresql:
-    image: postgres:17.0
+    image: postgres:17.2
     environment:
       - POSTGRES_DB=web
       - POSTGRES_USER=user

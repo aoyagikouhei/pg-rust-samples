@@ -1,0 +1,4 @@
+[test-groups]
+web = { max-threads = 1 }
+web2 = { max-threads = 1 }
+

@@ -32,6 +32,7 @@ pub async fn clear_db(pool: &Pool) -> Result<(), sqlx::Error> {
 pub async fn setup_test() -> Result<(Pool, Config), sqlx::Error> {
     let _ = env_logger::try_init();
     let config = Config::setup().await.unwrap();
+    println!("{:?}", std::thread::current().id());
     let pool = get_postgres_pool(&config.pg_url, config.max_connections).await?;
     clear_db(&pool).await?;
     Ok((pool, config))

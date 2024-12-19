@@ -5,6 +5,7 @@ mod user_sample;
 mod stream;
 mod listen;
 mod listen2;
+mod v7;
 
 // RUST_LOG=info cargo run
 #[tokio::main]
@@ -22,6 +23,7 @@ async fn main() -> anyhow::Result<()> {
     //stream::execute(&pool).await?;
     listen2::execute(&pool).await?;
     listen::execute(&pool).await?;
+    v7::execute();
     
 
     //api::execute()?;
