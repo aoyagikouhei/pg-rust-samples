@@ -4,6 +4,7 @@ SQL_DIR=$SCRIPT_DIR/../sql
 
 cat $SQL_DIR/01_prepare.sql > ./all.sql
 cat $SQL_DIR/02_kbn.sql >> ./all.sql
+cat $SQL_DIR/03_lib.sql >> ./all.sql
 cat $SQL_DIR/table/*.sql >> ./all.sql
 cat $SQL_DIR/stored/*.sql >> ./all.sql
 
