@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "version": "1.0.0"
+  },
+  "tables": [
+    {
+      "lname": "イシュー",
+      "pname": "issues",
+      "columns": [
+        {
+          "domain": "UUID",
+          "pk": true,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "lname": "イシュー",
+          "pname": "issue",
+          "domain": "名前"
+        }
+      ]
+    }
+  ]
+}

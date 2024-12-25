@@ -1,11 +1,11 @@
+use chrono::prelude::*;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
-use uuid::Uuid;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 use unicode_normalization::UnicodeNormalization;
 use unicode_segmentation::UnicodeSegmentation;
-use chrono::prelude::*;
+use uuid::{NoContext, Timestamp, Uuid};
 
 pub fn random_string(length: usize) -> String {
     thread_rng()
@@ -40,17 +40,28 @@ pub fn special_normalize_string(src: &str) -> String {
         .collect::<String>()
 }
 
-pub fn get_utc(uuid: &Uuid) -> Option<DateTime<Utc>> {
+pub fn uuid_to_utc(uuid: &Uuid) -> Option<DateTime<Utc>> {
     uuid.get_timestamp().and_then(|it| {
         let (secs, nsecs) = it.to_unix();
         Utc.timestamp_opt(secs as i64, nsecs).single()
     })
 }
 
+pub fn utc_to_uuid(utc: Option<DateTime<Utc>>) -> Uuid {
+    if let Some(utc) = utc {
+        let ts = Timestamp::from_unix(
+            NoContext,
+            utc.timestamp() as u64,
+            utc.timestamp_subsec_nanos(),
+        );
+        Uuid::new_v7(ts)
+    } else {
+        Uuid::now_v7()
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use uuid::{NoContext, Timestamp};
-
     use super::*;
 
     // RUST_LOG=info REALM_CODE=test cargo test -p common test_common_random_string -- --nocapture --test-threads=1
@@ -83,11 +94,13 @@ mod tests {
     // RUST_LOG=info REALM_CODE=test cargo test -p common test_common_get_utc -- --nocapture --test-threads=1
     #[tokio::test]
     async fn test_common_get_utc() -> anyhow::Result<()> {
-        let ts = Timestamp::from_unix(NoContext, 1497624119, 123_999_999);
-        let uuid = Uuid::new_v7(ts);
-        let utc = get_utc(&uuid).unwrap();
-        assert_eq!(utc.timestamp(), 1497624119);
-        assert_eq!(utc.timestamp_subsec_nanos(), 123_000_000);
+        let src = Utc.timestamp_opt(1497624119, 123_999_999).single().unwrap();
+        let uuid = utc_to_uuid(Some(src));
+        let dst: DateTime<Utc> = uuid_to_utc(&uuid).unwrap();
+        assert_eq!(dst.timestamp(), 1497624119);
+
+        // ミリ秒以下切り捨て
+        assert_eq!(dst.timestamp_subsec_nanos(), 123_000_000);
         Ok(())
     }
 }

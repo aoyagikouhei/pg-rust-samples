@@ -7,7 +7,7 @@ const CHANNEL_MSG: &str = "channel_msg";
 const CHANNEL_TERM: &str = "channel_term";
 
 pub async fn execute(pool: &PgPool) -> Result<(), sqlx::Error> {
-    let mut listener = PgListener::connect_with(&pool).await?;
+    let mut listener = PgListener::connect_with(pool).await?;
 
     let notify_pool = pool.clone();
     let _t = tokio::spawn(async move {
@@ -44,7 +44,10 @@ pub async fn execute(pool: &PgPool) -> Result<(), sqlx::Error> {
 
 async fn notfiy(pool: &PgPool, channel: &str, payload: &str) -> Result<(), sqlx::Error> {
     let sql = r#"SELECT pg_notify($1, $2)"#;
-     sqlx::query(sql).bind(channel).bind(payload).execute(pool).await?;
-     Ok(())
- }
- 
+    sqlx::query(sql)
+        .bind(channel)
+        .bind(payload)
+        .execute(pool)
+        .await?;
+    Ok(())
+}

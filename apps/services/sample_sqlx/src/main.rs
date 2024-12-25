@@ -1,10 +1,10 @@
 use sqlx::postgres::PgPoolOptions;
 mod composit;
-mod type_check;
-mod user_sample;
-mod stream;
 mod listen;
 mod listen2;
+mod stream;
+mod type_check;
+mod user_sample;
 mod v7;
 
 // RUST_LOG=info cargo run
@@ -24,7 +24,6 @@ async fn main() -> anyhow::Result<()> {
     listen2::execute(&pool).await?;
     listen::execute(&pool).await?;
     v7::execute();
-    
 
     //api::execute()?;
     Ok(())

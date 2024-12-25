@@ -3,7 +3,8 @@
     "version": "1.0.0"
   },
   "includes": [
-    "domain.erd.json"
+    "domain.erd.json",
+    "table2.erd.json"
   ],
   "templates": {
     "table": [

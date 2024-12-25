@@ -6,7 +6,12 @@ mod tests {
         INSERT INTO users (user_name, user_mail, company_uuid, created_at, updated_at)
         VALUES ($1, $2, $3, now(), now())
     "#;
-    async fn add_user(pool: &Pool, user_name: &str, user_mail: &str, company_uuid: &Uuid) -> anyhow::Result<()> {
+    async fn add_user(
+        pool: &Pool,
+        user_name: &str,
+        user_mail: &str,
+        company_uuid: &Uuid,
+    ) -> anyhow::Result<()> {
         let _ = sqlx::query(SQL)
             .bind(user_name)
             .bind(user_mail)

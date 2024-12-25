@@ -1,4 +1,8 @@
-use std::{pin::pin, sync::atomic::{AtomicI64, Ordering}, time::Duration};
+use std::{
+    pin::pin,
+    sync::atomic::{AtomicI64, Ordering},
+    time::Duration,
+};
 
 use futures_util::TryStreamExt;
 use sqlx::{postgres::PgListener, prelude::*, PgPool, Pool, Postgres};
@@ -6,7 +10,7 @@ use sqlx::{postgres::PgListener, prelude::*, PgPool, Pool, Postgres};
 const LISTEN_DURATION: Duration = Duration::from_secs(5);
 
 pub async fn execute(pool: &Pool<Postgres>) -> Result<(), sqlx::Error> {
-    let mut listener = PgListener::connect_with(&pool).await?;
+    let mut listener = PgListener::connect_with(pool).await?;
 
     let notify_pool = pool.clone();
     let _t = tokio::spawn(async move {
@@ -86,9 +90,9 @@ from (
      ) notifies(chan, payload)
     "#,
     )
-    .bind(&COUNTER.fetch_add(1, Ordering::SeqCst))
-    .bind(&COUNTER.fetch_add(1, Ordering::SeqCst))
-    .bind(&COUNTER.fetch_add(1, Ordering::SeqCst))
+    .bind(COUNTER.fetch_add(1, Ordering::SeqCst))
+    .bind(COUNTER.fetch_add(1, Ordering::SeqCst))
+    .bind(COUNTER.fetch_add(1, Ordering::SeqCst))
     .execute(pool)
     .await;
 
