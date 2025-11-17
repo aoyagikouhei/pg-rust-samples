@@ -19,7 +19,7 @@ services:
       - seccomp:unconfined
 
   postgresql:
-    image: postgres:17.2
+    image: postgres:18.1
     environment:
       - POSTGRES_DB=web
       - POSTGRES_USER=user
@@ -27,10 +27,10 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - pg_rust_samples_postgresql_data:/var/lib/postgresql/data
+      - pg_rust_samples_postgresql_data:/var/lib/postgresql
 
   valkey:
-    image: valkey/valkey:8.0.1
+    image: valkey/valkey:9.0.0
     ports:
       - 6379:6379
     volumes:

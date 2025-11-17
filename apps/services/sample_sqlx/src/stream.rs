@@ -12,6 +12,7 @@ struct User {
     pub data_json: serde_json::Value,
 }
 
+#[allow(dead_code)]
 pub async fn execute(pool: &Pool<Postgres>) -> Result<(), sqlx::Error> {
     let uuid: Uuid = Uuid::now_v7();
     let mut stream = sqlx::query_as::<_, User>("SELECT * FROM sample_get_list_users(p_uuid := $1)")

@@ -1,6 +1,6 @@
 use chrono::prelude::*;
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
+use rand::distr::Alphanumeric;
+use rand::{rng, Rng};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 use unicode_normalization::UnicodeNormalization;
@@ -8,7 +8,7 @@ use unicode_segmentation::UnicodeSegmentation;
 use uuid::{NoContext, Timestamp, Uuid};
 
 pub fn random_string(length: usize) -> String {
-    thread_rng()
+    rng()
         .sample_iter(&Alphanumeric)
         .take(length)
         .map(char::from)

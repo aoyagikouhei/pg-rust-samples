@@ -49,8 +49,8 @@ pub fn get_uuid(data: &[u8]) -> Result<Uuid, EncryptError> {
 pub fn make_nonce() -> Vec<u8> {
     let uuid = Uuid::now_v7();
     let mut res = uuid.as_bytes().to_vec();
-    let mut rng = rand::rngs::StdRng::from_entropy();
-    res.extend(rng.gen::<[u8; 8]>().to_vec());
+    let mut rng = rand::rngs::StdRng::from_os_rng();
+    res.extend(rng.random::<[u8; 8]>().to_vec());
     res
 }
 
