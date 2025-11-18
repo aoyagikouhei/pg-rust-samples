@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS public.users CASCADE;
 DROP TABLE IF EXISTS garbage.users CASCADE;
 
 CREATE TABLE public.users (
-  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  uuid UUID NOT NULL DEFAULT uuidv7() -- UUID
   ,company_uuid UUID NOT NULL -- 企業UUID
   ,user_name TEXT NOT NULL DEFAULT '' -- ユーザ名
   ,user_mail TEXT NOT NULL DEFAULT '' -- ユーザメール
@@ -17,12 +17,12 @@ CREATE TABLE public.users (
   ,updated_pg TEXT NOT NULL DEFAULT ''
   ,deleted_pg TEXT NOT NULL DEFAULT ''
   ,bk TEXT
-  ,PRIMARY KEY(uuid)  
+  ,PRIMARY KEY (uuid, company_uuid) 
   ,FOREIGN KEY (company_uuid) REFERENCES companies(uuid)
-);
+) PARTITION BY LIST(company_uuid);
 
 CREATE TABLE garbage.users (
-  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  uuid UUID NOT NULL DEFAULT uuidv7() -- UUID
   ,company_uuid UUID NOT NULL -- 企業UUID
   ,user_name TEXT NOT NULL DEFAULT '' -- ユーザ名
   ,user_mail TEXT NOT NULL DEFAULT '' -- ユーザメール
@@ -37,5 +37,5 @@ CREATE TABLE garbage.users (
   ,updated_pg TEXT NOT NULL DEFAULT ''
   ,deleted_pg TEXT NOT NULL DEFAULT ''
   ,bk TEXT
-  ,PRIMARY KEY(uuid) 
+  ,PRIMARY KEY (uuid, company_uuid)
 );

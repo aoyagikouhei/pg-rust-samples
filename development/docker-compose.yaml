@@ -28,6 +28,7 @@ services:
       - 5432:5432
     volumes:
       - pg_rust_samples_postgresql_data:/var/lib/postgresql
+      - ../db:/db
 
   valkey:
     image: valkey/valkey:9.0.0

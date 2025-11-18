@@ -10,7 +10,7 @@
         {
           "domain": "UUID",
           "pk": true,
-          "default": "gen_random_uuid()"
+          "default": "uuidv7()"
         },
         {
           "lname": "イシュー",

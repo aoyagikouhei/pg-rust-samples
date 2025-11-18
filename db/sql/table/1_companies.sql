@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS public.companies CASCADE;
 DROP TABLE IF EXISTS garbage.companies CASCADE;
 
 CREATE TABLE public.companies (
-  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  uuid UUID NOT NULL DEFAULT uuidv7() -- UUID
   ,company_name TEXT NOT NULL DEFAULT '' -- 企業名
   ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
@@ -18,7 +18,7 @@ CREATE TABLE public.companies (
 );
 
 CREATE TABLE garbage.companies (
-  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  uuid UUID NOT NULL DEFAULT uuidv7() -- UUID
   ,company_name TEXT NOT NULL DEFAULT '' -- 企業名
   ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'

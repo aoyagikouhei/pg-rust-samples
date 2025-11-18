@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS public.issues CASCADE;
 DROP TABLE IF EXISTS garbage.issues CASCADE;
 
 CREATE TABLE public.issues (
-  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  uuid UUID NOT NULL DEFAULT uuidv7() -- UUID
   ,issue_name TEXT NOT NULL DEFAULT '' -- イシュー名
   ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
@@ -18,7 +18,7 @@ CREATE TABLE public.issues (
 );
 
 CREATE TABLE garbage.issues (
-  uuid UUID NOT NULL DEFAULT gen_random_uuid() -- UUID
+  uuid UUID NOT NULL DEFAULT uuidv7() -- UUID
   ,issue_name TEXT NOT NULL DEFAULT '' -- イシュー名
   ,created_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
   ,updated_uuid UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'

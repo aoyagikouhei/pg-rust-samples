@@ -1978,6 +1978,14 @@ checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
 [[package]]
 name = "sample_builder"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "env_logger",
+ "serde_json",
+ "sql_query_builder",
+ "sqlx",
+ "tokio",
+]
 
 [[package]]
 name = "sample_sqlx"
@@ -2157,6 +2165,12 @@ dependencies = [
  "base64ct",
  "der",
 ]
+
+[[package]]
+name = "sql_query_builder"
+version = "2.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2651412ae7213fc4eb36349c204614c0aee7d7cef23328e10101413781b4b200"
 
 [[package]]
 name = "sqlx"
