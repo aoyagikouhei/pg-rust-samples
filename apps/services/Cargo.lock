@@ -1980,11 +1980,13 @@ name = "sample_builder"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "env_logger",
  "serde_json",
  "sql_query_builder",
  "sqlx",
  "tokio",
+ "uuid",
 ]
 
 [[package]]
