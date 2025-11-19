@@ -1,9 +1,27 @@
 use crate::Pool;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::*;
 use uuid::Uuid;
+use derive_builder::Builder;
+use sqlx::prelude::*;
+
+pub struct UsersFields {
+    pub uuid: &'static str,
+    pub company_uuid: &'static str,
+    pub user_name: &'static str,
+    pub user_mail: &'static str,
+    pub user_kbn: &'static str,
+    pub created_at: &'static str,
+    pub created_pg: &'static str,
+    pub created_uuid: &'static str,
+    pub deleted_at: &'static str,
+    pub deleted_pg: &'static str,
+    pub deleted_uuid: &'static str,
+    pub updated_at: &'static str,
+    pub updated_pg: &'static str,
+    pub updated_uuid: &'static str,
+    pub bk: &'static str,
+}
 
 const SELECT_SQL: &str = r#"
 SELECT
@@ -160,6 +178,26 @@ pub struct Users {
 }
 
 impl Users {
+    pub const TABLE_NAME: &'static str = "public.users";
+    
+    pub const FIELDS: UsersFields = UsersFields {
+        uuid: "uuid",
+        company_uuid: "company_uuid",
+        user_name: "user_name",
+        user_mail: "user_mail",
+        user_kbn: "user_kbn",
+        created_at: "created_at",
+        created_pg: "created_pg",
+        created_uuid: "created_uuid",
+        deleted_at: "deleted_at",
+        deleted_pg: "deleted_pg",
+        deleted_uuid: "deleted_uuid",
+        updated_at: "updated_at",
+        updated_pg: "updated_pg",
+        updated_uuid: "updated_uuid",
+        bk: "bk",
+    };
+
     pub async fn insert(&self, pool: &Pool) -> Result<Self, sqlx::Error> {
         sqlx::query_as(INSERT_SQL)
             .bind(self.uuid)
@@ -207,16 +245,23 @@ impl Users {
     }
 
     pub async fn delete_one(pool: &Pool, uuid: &Uuid) -> Result<Self, sqlx::Error> {
-        sqlx::query_as(DELETE_SQL).bind(uuid).fetch_one(pool).await
+        sqlx::query_as(DELETE_SQL)
+            .bind(uuid)
+            .fetch_one(pool)
+            .await
     }
 
     pub async fn delete_all(pool: &Pool) -> Result<(), sqlx::Error> {
-        let _ = sqlx::query(DELETE_ALL_SQL).execute(pool).await?;
+        let _ = sqlx::query(DELETE_ALL_SQL)
+            .execute(pool)
+            .await?;
         Ok(())
     }
 
     pub async fn select_all(pool: &Pool) -> Result<Vec<Self>, sqlx::Error> {
-        let rows: Vec<Self> = sqlx::query_as(SELECT_SQL).fetch_all(pool).await?;
+        let rows: Vec<Self> = sqlx::query_as(SELECT_SQL)
+            .fetch_all(pool)
+            .await?;
         Ok(rows)
     }
 

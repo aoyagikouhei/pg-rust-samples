@@ -1982,6 +1982,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "env_logger",
+ "postgresql",
  "serde_json",
  "sql_query_builder",
  "sqlx",

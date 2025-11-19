@@ -75,12 +75,33 @@
     const selects = table.columns.map((column) => {
         return  `t1.${column.pname}`;
     }).join('\n    ,');
+
+    const fields = table.columns.map((column) => {
+        return  `pub ${column.pname}: &'static str,`;
+    }).join('\n    ');
+    const field_instances = table.columns.map((column) => {
+        return  `${column.pname}: "${column.pname}",`;
+    }).join('\n        ');
 %>use crate::Pool;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use derive_builder::Builder;
 use sqlx::prelude::*;
+
+pub struct <%= structName %>Fields {
+    <%- fields %>
+    pub created_at: &'static str,
+    pub created_pg: &'static str,
+    pub created_uuid: &'static str,
+    pub deleted_at: &'static str,
+    pub deleted_pg: &'static str,
+    pub deleted_uuid: &'static str,
+    pub updated_at: &'static str,
+    pub updated_pg: &'static str,
+    pub updated_uuid: &'static str,
+    pub bk: &'static str,
+}
 
 const SELECT_SQL: &str = r#"
 SELECT
@@ -206,6 +227,22 @@ pub struct <%= structName %> {
 }
 
 impl <%= structName %> {
+    pub const TABLE_NAME: &'static str = "public.<%= table.pname %>";
+    
+    pub const FIELDS: <%= structName %>Fields = <%= structName %>Fields {
+        <%- field_instances %>
+        created_at: "created_at",
+        created_pg: "created_pg",
+        created_uuid: "created_uuid",
+        deleted_at: "deleted_at",
+        deleted_pg: "deleted_pg",
+        deleted_uuid: "deleted_uuid",
+        updated_at: "updated_at",
+        updated_pg: "updated_pg",
+        updated_uuid: "updated_uuid",
+        bk: "bk",
+    };
+
     pub async fn insert(&self, pool: &Pool) -> Result<Self, sqlx::Error> {
         sqlx::query_as(INSERT_SQL)
             <%- insertBinds %>
