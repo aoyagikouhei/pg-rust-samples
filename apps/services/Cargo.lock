@@ -1555,6 +1555,7 @@ dependencies = [
  "derive_builder",
  "env_logger",
  "serde",
+ "sql_query_builder",
  "sqlx",
  "strum",
  "tokio",

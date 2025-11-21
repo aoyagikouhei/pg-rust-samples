@@ -1,20 +1,9 @@
-use sql_query_builder as sql;
-use sqlx::prelude::*;
-use sqlx::postgres::PgPoolOptions;
-use uuid::Uuid;
 use postgresql::table::{companies::Companies, users::Users};
+use sql_query_builder as sql;
+use sqlx::postgres::PgPoolOptions;
 
-#[allow(dead_code)]
-#[derive(FromRow, Debug)]
-struct Company {
-    pub uuid: Uuid,
-}
-
-#[allow(dead_code)]
-#[derive(FromRow, Debug)]
-struct User {
-    pub uuid: Uuid,
-    pub user_name: String,
+fn make_where_clause(field: &str, operator: &str, index: usize) -> String {
+    format!("{} {} ${}", field, operator, index)
 }
 
 #[tokio::main]
@@ -26,30 +15,32 @@ async fn main() -> anyhow::Result<()> {
         .connect("postgres://user:pass@postgresql/web")
         .await?;
 
-    let select = sql::Select::new()
-        .select(Companies::FIELDS.uuid)
-        .from(Companies::TABLE_NAME)
-    ;
-    let company: Company = sqlx::query_as(&select.as_string())
+    let query = sql::Select::new()
+        .raw(Companies::SELECT_SQL)
+        .where_clause(&make_where_clause(
+            Companies::FIELDS.company_name,
+            "LIKE",
+            1,
+        ));
+    let company: Companies = sqlx::query_as(&query.as_string())
+        .bind("%Sample%")
         .fetch_one(&pool)
         .await?;
 
-
-    let select = sql::Select::new()
-        .select(&[Users::FIELDS.uuid, Users::FIELDS.user_name].join(", "))
+    let query = sql::Select::new()
+        .select("*")
         .from(Users::TABLE_NAME)
-        .where_clause(&format!("{} = $1", Users::FIELDS.company_uuid))
-    ;
+        .where_clause(&make_where_clause(Users::FIELDS.company_uuid, "=", 1))
+        .where_clause(&make_where_clause(Users::FIELDS.user_name, "LIKE", 2));
 
-    let query = select.as_string();
+    println!("SQL: {}", query.as_string());
 
-    let user: User = sqlx::query_as(&query)
+    let user: Users = sqlx::query_as(&query.as_string())
         .bind(company.uuid)
+        .bind("%Sample%")
         .fetch_one(&pool)
         .await?;
 
     println!("{:?}", user);
-
-    //api::execute()?;
     Ok(())
 }

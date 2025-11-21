@@ -9,6 +9,7 @@ common = { path = "../common" }
 env_logger = { workspace = true }
 derive_builder = { workspace = true }
 serde = { workspace = true }
+sql_query_builder = { workspace = true }
 sqlx = { workspace = true }
 strum = { workspace = true }
 uuid = { workspace = true }
