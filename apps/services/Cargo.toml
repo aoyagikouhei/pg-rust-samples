@@ -1,6 +1,6 @@
 [workspace]
 
-members = ["sample_sqlx", "crates/*", "sample_builder"]
+members = ["sample_sqlx", "crates/*", "sample_builder", "samples"]
 
 resolver = "2"
 
@@ -10,6 +10,7 @@ base64 = "0.22.1"
 bit-vec = "0.6"
 chacha20poly1305 = {version = "0.10.1", features = ["std"] }
 chrono = { version = "0.4", features = ["serde", "clock"] }
+ffmpeg-next = "8.0.0"
 env_logger = "0.11"
 derive_builder = "0.20.2"
 futures-util = "0.3.31"
