@@ -54,8 +54,5 @@ fn main() {
         for side_data in side_data_iter {
             println!("  Side Data Type: {:?}", side_data.kind());
         }
-
-        
-        
     };
 }
